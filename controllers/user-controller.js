@@ -1,3 +1,4 @@
+const res = require('express/lib/response');
 const { User } = require('../models');
 
 const userController = {
@@ -16,7 +17,7 @@ const userController = {
         });
     },
 
-
+// Find User by ID
     getUserById({ param}, res) {
         User.findOne({ _id: URLSearchParams.id })
         .populate({
@@ -35,5 +36,24 @@ const userController = {
             console.log(err);
             res.status(400).json(err);
         });
-    }
+    },
+
+    // Create A User
+    createUser ({ body}, res) {
+        User.create(body)
+        .then(dbUserData => res.json(dbUserData))
+        .catch(err => res.status(404).json(err));
+    },
+
+    // Update a User by ID
+    updateUser({ params, body}, res){
+        User.findOneAndUpdate ({ _id: params.id}, body, {new: true, runValidators: true})
+        .then(dbUserData => {if(!dbUserData) {
+            res.status(404).json({ message: 'No user fonud with this id!'});
+            return;
+        }
+        res.json(dbUserData);
+    })
+        .catch(err => res.status(400));
+    },
 }
