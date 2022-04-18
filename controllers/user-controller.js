@@ -1,4 +1,3 @@
-const res = require('express/lib/response');
 const { User } = require('../models');
 
 const userController = {
@@ -17,7 +16,7 @@ const userController = {
         });
     },
 
-// Find User by ID
+// Find User by ID Method
     getUserById({ param}, res) {
         User.findOne({ _id: URLSearchParams.id })
         .populate({
@@ -38,14 +37,14 @@ const userController = {
         });
     },
 
-    // Create A User
+    // Create A User Method
     createUser ({ body}, res) {
         User.create(body)
         .then(dbUserData => res.json(dbUserData))
         .catch(err => res.status(404).json(err));
     },
 
-    // Update a User by ID
+    // Update a User by ID Method
     updateUser({ params, body}, res){
         User.findOneAndUpdate ({ _id: params.id}, body, {new: true, runValidators: true})
         .then(dbUserData => {if(!dbUserData) {
@@ -81,4 +80,18 @@ const userController = {
         })
         .catch(err => res.status(400).json(err));
     },
-}
+
+    // removing friend method
+    removeFriend (req, res) {
+        User.findOneAndUpdate({ _id: req.params.userId}, {$pull: { friends: req.params.friendId} }, {new: true})
+        .then(dbUserData => {
+            if(!dbUserData) {
+                return res.status(404).json ({ message: 'No user found with this id!'});
+            }
+            res.json(dbUserData);
+        })
+        .catch(err => res.status(400).json(err));
+    }
+};
+
+module.exports = userController;
