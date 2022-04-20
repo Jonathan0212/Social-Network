@@ -3,6 +3,7 @@ const { Thought, User } = require('../models');
 // Object with add thought to user method on line 5
 const thoughtController = {
 
+    // GET all Thoughts
     getAllThought(req,res) {
         Thought.find({})
         .populate({
@@ -16,6 +17,27 @@ const thoughtController = {
             console.log(err);
             res.sendStatus(400);
         });
+    },
+
+    getThoughtByID ({params}, res) {
+        Thought.findOne({ _id: params.id })
+        .populate({
+            path:'reactions',
+            select:'__v'
+        })
+        .select('__v')
+        .sort({ _id: -1 })
+        .then(dbUserData => {
+            if(!dbUserData) {
+                res.status(404).json({ message: 'No thought found with this ID!'});
+                return;
+            }
+            res.json(dbUserData);
+        })
+            .catch(err => {
+            console.log(err);
+            res.sendStatus(400)
+        })
     },
 
 
