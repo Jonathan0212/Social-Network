@@ -2,10 +2,28 @@ const { Thought, User } = require('../models');
 
 // Object with add thought to user method on line 5
 const thoughtController = {
+
+    getAllThought(req,res) {
+        Thought.find({})
+        .populate({
+            path:'reactions',
+            select: '__v'
+        })
+        .select('-__v')
+        .sort({_id: -1})
+        .then(dbThoughtData => res.json(dbThoughtData))
+        .catch(err => {
+            console.log(err);
+            res.sendStatus(400);
+        });
+    },
+
+
+
     addThought ({ params, body}, res) {
         console.log(body);
         Thought.create(body)
-        .then (({_id}) => {
+        .then (({ _id }) => {
             return User.findOneAndUpdate(
                 { _id: params.userId },
                 { $push: {thoughts: _id} },
@@ -91,5 +109,5 @@ const thoughtController = {
 };
 
       
-
+module.exports = thoughtController;
 

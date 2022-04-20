@@ -17,8 +17,8 @@ const userController = {
     },
 
 // Find User by ID Method
-    getUserById({ param}, res) {
-        User.findOne({ _id: URLSearchParams.id })
+    getUserById({ params}, res) {
+        User.findOne({ _id: params.id })
         .populate({
             path:'thoughts',
             select:'-__v'
