@@ -15,7 +15,7 @@ Social Network is a backend API that allows users to create users and let other 
 ## Technologies 
 * Javscript
 * Node
-* MySQL
+* NoSQL
 * Express
 
 
